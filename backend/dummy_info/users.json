@@ -1,0 +1,35 @@
+{
+		"user_name":"Lia",
+		"phone_number": "9434241404",
+		"status": "logged in",
+		"password": "XD :V :3",
+		"email": "Brrr@gmail.com",
+		"kyc_status": "done",
+		"kyc_details":{"pan": "67zAe5tgz1010"},
+		"orders":[{ "order_id":1, "order_status": "Processing Order", "productName":["GAIL India","Cipla"], "units":[5,1], "costs":[], "total":0},
+						 { "order_id":2, "order_status": "Processing Order", "productName":["Tata Digital India Fund Direct Growth"], "units":[6], "costs":[], "total":0},
+						 { "order_id":3, "order_status": "Successful Order", "productName":["Alphabet Inc. - Class A Shares ","Tata Digital India Fund Direct Growth"], "units": [2,8], "costs":[], "total":0},
+						 { "order_id":4, "order_status": "Failed Order", "productName":["Cipla"], "units":[10], "costs":[], "total":0}
+					   ]
+}
+{
+		"user_name": "Abcd",
+		"phone_number": "9898989898",
+		"status": "logged out",
+		"password": "Nyaaa",
+		"email": "Mewwww@gmail.com",
+		"kyc_status": "not done",
+		"kyc_details":{"pan": "" },
+		"orders":[]
+}
+{
+		"user_name":"Brrr",
+		"phone_number": "65555666655",
+		"status": "logged out",
+		"password": "Br",
+		"email": "Br@gmail.com",
+		"kyc_status": "done",
+		"kyc_details":{"pan": "86tAe5tgy7797"},
+		"orders":[{ "order_id":1, "order_status":"Processing Order","productName":["Cipla","Muthoot Finance","Tata Digital India Fund Direct Growth"],"units":[1,2,3], "costs":[], "total":0},
+						 { "order_id":2, "order_status": "Failed Order","productName":["Starbucks Corporation","UPL","Apple, Inc.","Walt Disney Company"],"units": [1,2,2,8], "costs":[], "total":0} ]
+}
