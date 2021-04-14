@@ -1,4 +1,4 @@
-# GROWW-Chatbot Team Members: Subhadip Maji &amp; Aishwarya Deb
+# GROWW-Chatbot
 
 
  The goal of this project was to make a contextual chatbot as a feature for the GROWW website. This was part of our CRIO stage 3 externship.
