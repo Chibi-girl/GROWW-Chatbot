@@ -41,7 +41,7 @@ const  sendDetailsToServer = () => {
       }
       
         
-        axios.post("http://localhost:8080/registerUser", payload)
+        axios.post("https://groww-backend.herokuapp.com/registerUser", payload)
             .then(function (response) {
                 if(response.status === 201){
                   setRegister(<Alert variant="success">

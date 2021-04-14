@@ -2,21 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Form, Alert, Card, Container } from "react-bootstrap";
 import axios from "axios";
 import { AdminNav } from ".";
-function AdminProduct(props) {
-  const [error, setError] = useState(null);
-  
+function AdminPage(props) {
   const [items, setItems] = useState([]);
-  const [questions, setQuestions] = useState([]);
   const [srNo, setSr] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+
   const [state, setState] = useState({
     page: "stocks",
-    id: "",
-    sr: "",
+    type: "",
     question: "",
     answer: "",
+    id: "",
     newquestion: "",
     newanswer: "",
   });
@@ -24,20 +23,21 @@ function AdminProduct(props) {
   const [editAlert, setEditAlert] = useState(null);
   const [deleteAlert, setDeleteAlert] = useState(null);
 
+  const [error, setError] = useState(null);
   useEffect(() => {
     fetch(props.data + state.page)
       .then((res) => res.json())
       .then(
         (result) => {
-          setItems([]);
-          setItems(result[0].page);
-          
+          let types = [];
+          for (let i = 0; i < result[0].subsections.length; i++)
+            types.push(result[0].subsections[i].type);
+          setItems(types);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-         
           setError(error);
         }
       );
@@ -55,50 +55,59 @@ function AdminProduct(props) {
       .then((res) => res.json())
       .then(
         (result) => {
+          let types = [];
+          for (let i = 0; i < result[0].subsections.length; i++)
+            types.push(result[0].subsections[i].type);
           setItems([]);
           setSr([]);
-          setAnswer("");
           setQuestion("");
-          setItems(result[0].page);
+          setAnswer("");
+          setItems(types);
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-         
           setError(error);
         }
       );
   };
-  const handleIdChange = (e) => {
+  const handleTypeChange = (e) => {
     const { id, value } = e.target;
     if (e.target.value.length > 0) {
-      fetch(props.data + state.page + "/" + e.target.value)
+      fetch(props.data + state.page)
         .then((res) => res.json())
         .then(
           (result) => {
-            setQuestions(result.questions);
-            setAnswers(result.answers);
             let ids = [];
-
-            for (let j = 0; j < result.questions.length; j++) ids.push(j + 1);
+            for (let i = 0; i < result[0].subsections.length; i++) {
+              if (result[0].subsections[i].type === e.target.value) {
+                setQuestions(result[0].subsections[i].questions);
+                setAnswers(result[0].subsections[i].answers);
+                for (
+                  let j = 0;
+                  j < result[0].subsections[i].questions.length;
+                  j++
+                )
+                  ids.push(j + 1);
+              }
+            }
             setSr([]);
-            setAnswer("");
             setQuestion("");
+            setAnswer("");
             setSr(ids);
           },
           // Note: it's important to handle errors here
           // instead of a catch() block so that we don't swallow
           // exceptions from actual bugs in components.
           (error) => {
-           
             setError(error);
           }
         );
     } else {
       setSr([]);
-      setAnswer("");
       setQuestion("");
+      setAnswer("");
     }
 
     setState((prevState) => ({
@@ -106,7 +115,7 @@ function AdminProduct(props) {
       [id]: value,
     }));
   };
-  const handleSrChange = (e) => {
+  const handleIdChange = (e) => {
     const { id, value } = e.target;
     setQuestion(questions[e.target.value - 1]);
     setAnswer(answers[e.target.value - 1]);
@@ -126,7 +135,8 @@ function AdminProduct(props) {
   const addQuestionToServer = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:8080/products/" + state.id, {
+      .post("https://groww-backend.herokuapp.com/pages/" + state.page, {
+        subsection: state.type,
         question: state.question,
         answer: state.answer,
       })
@@ -144,8 +154,9 @@ function AdminProduct(props) {
   const editQuestion = (e) => {
     e.preventDefault();
     axios
-      .patch("http://localhost:8080/products/" + state.id, {
-        id: state.sr,
+      .patch("https://groww-backend.herokuapp.com/pages/" + state.page, {
+        subsection: state.type,
+        id: state.id,
         newquestion: state.newquestion,
         newanswer: state.newanswer,
       })
@@ -157,15 +168,16 @@ function AdminProduct(props) {
       })
       .catch(function(error) {
         console.log(error);
-        setDeleteAlert(<Alert variant="danger">Some error occured</Alert>);
+        setEditAlert(<Alert variant="danger">Some error occured</Alert>);
       });
   };
   const deleteQuestion = (e) => {
     e.preventDefault();
     axios
-      .delete("http://localhost:8080/products/" + state.id, {
+      .delete("https://groww-backend.herokuapp.com/pages/" + state.page, {
         data: {
-          id: state.sr,
+          subsection: state.type,
+          id: state.id,
         },
       })
       .then(function(response) {
@@ -197,17 +209,23 @@ function AdminProduct(props) {
                   <Form.Control as="select" onChange={handlePageChange}>
                     <option value="stocks">Stocks</option>
                     <option value="mutual_funds">Mutual Funds</option>
+                    <option value="gold">Gold</option>
                     <option value="us_stocks">US Stocks</option>
+                    <option value="orders">Orders</option>
                   </Form.Control>
                 </Form.Group>
-                <Form.Group controlId="id">
-                  <Form.Label>Product</Form.Label>
-                  <Form.Control as="select" onChange={handleIdChange} required>
-                    <option value="">-</option>
-                    {items.map((item) => (
-                      <option key={item.product_id} value={item.product_id}>
-                        {item.product_name}
-                      </option>
+                <Form.Group controlId="type">
+                  <Form.Label>Type</Form.Label>
+                  <Form.Control
+                    as="select"
+                    onChange={handleTypeChange}
+                    required
+                  >
+                    <option value="" selected>
+                      -
+                    </option>
+                    {items.map((item, i) => (
+                      <option key={i}>{item}</option>
                     ))}
                   </Form.Control>
                 </Form.Group>
@@ -236,11 +254,14 @@ function AdminProduct(props) {
                 </button>
                 {addAlert}
               </Form>
+
               <Form onSubmit={editQuestion}>
-                <Form.Group controlId="sr">
+                <Form.Group controlId="id">
                   <Form.Label>Sr. No.</Form.Label>
-                  <Form.Control as="select" onChange={handleSrChange} required>
-                    <option value="">-</option>
+                  <Form.Control as="select" onChange={handleIdChange} required>
+                    <option value="" selected>
+                      -
+                    </option>
                     {srNo.map((item, i) => (
                       <option key={i}>{item}</option>
                     ))}
@@ -260,12 +281,12 @@ function AdminProduct(props) {
                   />
                 </Form.Group>
                 <Form.Group controlId="newquestion">
-                  <Form.Label>New Question</Form.Label>
+                  <Form.Label> New Question</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter question"
-                    required
+                    placeholder="Enter new question"
                     onChange={handleOtherChange}
+                    required
                   />
                 </Form.Group>
                 <Form.Group controlId="newanswer">
@@ -273,13 +294,13 @@ function AdminProduct(props) {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter answer"
-                    required
+                    placeholder="Enter new answer"
                     onChange={handleOtherChange}
+                    required
                   />
                 </Form.Group>
                 <button type="submit" className="login">
-                  Edit question
+                  Edit question and asnwer
                 </button>
                 {editAlert}
               </Form>
@@ -299,7 +320,7 @@ function AdminProduct(props) {
                   />
                 </Form.Group>
                 <button type="submit" className="login">
-                  Delete question
+                  Delete question and answer
                 </button>
                 {deleteAlert}
               </Form>
@@ -310,4 +331,4 @@ function AdminProduct(props) {
     </div>
   );
 }
-export default AdminProduct;
+export default AdminPage;
