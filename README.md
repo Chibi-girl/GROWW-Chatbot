@@ -1,4 +1,4 @@
-# GROWW-Chatbot
+![GROWW-Chatbot](https://socialify.git.ci/Chibi-girl/GROWW-Chatbot/image?font=Inter&forks=1&language=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Dark)
 
 
  The goal of this project was to make a contextual chatbot as a feature for the GROWW website. This was part of our CRIO stage 3 externship.
