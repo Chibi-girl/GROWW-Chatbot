@@ -37,7 +37,7 @@
 
 * The admin UI allows the admin to configure questions and  answers of their choice. They can add, edit and delete.
 
-### **Urls **
+### **Urls**
 
 * [Dummy website to see the chatbot working](https://groww-chatbot.netlify.app/) based on the Groww website
 * [Admin UI](https://custom-chatbot-admin.netlify.app/admin)
